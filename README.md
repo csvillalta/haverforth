@@ -1,7 +1,8 @@
 # HaverForth in JavaScript
-Adapted from https://github.com/kmicinski/haverforth
 
-**A FORTH calculator implemented in JavaScript.**
+**An interactive FORTH calculator implemented in JavaScript.**
+
+Adapted from https://github.com/kmicinski/haverforth
 
 **Part 7 and 8 of lab 7E are in the file named lab_7E_reflections.MD. Part 13 of the final is in the file named final_project_reflections.MD.**
 
