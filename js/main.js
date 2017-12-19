@@ -2,13 +2,14 @@
 // https://stackoverflow.com/questions/1208222/how-to-do-associative-array-hashing-in-javascript
 var NOT_DEFINING_FUNCTION = 1; // flag to make the process function either execute commands in the terminal or add commands to a temporary function definition
 var temp_function_definition = []; // will hold user function definitions (i.e. everything between : and ;) until the function is added to the user_words dictionary
-var help_text_color = "yellow";
+var help_text_color = "yellow"; // globally set the color of help text
+var error_text_color = "red";	// globally set the color of error text
 
 var user_words = {}; // holds user functions
 var words = { 
 				"+" : function (stack, terminal) {
 					if (stack.length() < 2) {
-						print(terminal, "Not enough inputs on stack for + operation!");
+						print(terminal, "Not enough inputs on stack for + operation!", error_text_color);
 						stack.clear();
 					} else {
 					    var first = stack.pop();
@@ -18,7 +19,7 @@ var words = {
 				},
 				"-" : function(stack, terminal) {
 					if (stack.length() < 2) {
-						print(terminal, "Not enough inputs on stack for - operation!");
+						print(terminal, "Not enough inputs on stack for - operation!", error_text_color);
 						stack.clear();
 					} else {
 						var first = stack.pop();
@@ -28,7 +29,7 @@ var words = {
 				},
 				"*" : function(stack, terminal) {
 					if (stack.length() < 2) {
-						print(terminal, "Not enough inputs on stack for * operation!");
+						print(terminal, "Not enough inputs on stack for * operation!", error_text_color);
 						stack.clear();
 					} else {
 						var first = stack.pop();
@@ -38,19 +39,22 @@ var words = {
 				},
 				"/" : function (stack, terminal) {
 					if (stack.length() < 2) {
-						print(terminal, "Not enough inputs on stack for / operation!");
+						print(terminal, "Not enough inputs on stack for / operation!", error_text_color);
 						stack.clear();
 					} else {
 					    var first = stack.pop();
 				        var second = stack.pop();
 				        if (first != 0) {
 				        	stack.push(second/first);
+				        } else {
+				        	print(terminal, "Division by 0.", error_text_color);
+				        	stack.clear();
 				        }
 			    	}
 				},
 				">" : function(stack, terminal) {
 					if (stack.length() < 2) {
-						print(terminal, "Not enough inputs on stack for > operation!");
+						print(terminal, "Not enough inputs on stack for > operation!", error_text_color);
 						stack.clear();
 					} else {
 						var first = stack.pop();
@@ -64,7 +68,7 @@ var words = {
 				},
 				"<" : function(stack, terminal) {
 					if (stack.length() < 2) {
-						print(terminal, "Not enough inputs on stack for < operation!");
+						print(terminal, "Not enough inputs on stack for < operation!", error_text_color);
 						stack.clear();
 					} else {
 						var first = stack.pop();
@@ -78,7 +82,7 @@ var words = {
 				},
 				"=" : function(stack, terminal) {
 					if (stack.length() < 2) {
-						print(terminal, "Not enough inputs on stack for = operation!");
+						print(terminal, "Not enough inputs on stack for = operation!", error_text_color);
 						stack.clear();
 					} else {
 						var first = stack.pop();
@@ -92,7 +96,7 @@ var words = {
 				},
 				"dup" : function(stack, terminal) {
 					if (stack.length() < 1) {
-						print(terminal, "Not enough inputs on stack for dup operation!");
+						print(terminal, "Not enough inputs on stack for dup operation!", error_text_color);
 						stack.clear();
 					} else {
 						var top = stack.pop();
@@ -102,7 +106,7 @@ var words = {
 				},
 				"nip" : function(stack, terminal) {
 					if (stack.length() < 1) {
-						print(terminal, "Not enough inputs on stack for nip operation!");
+						print(terminal, "Not enough inputs on stack for nip operation!", error_text_color);
 						stack.clear();
 					} else {
 						var first = stack.pop();
@@ -112,7 +116,7 @@ var words = {
 				},
 				"swap" : function(stack, terminal) {
 					if (stack.length() < 2) {
-						print(terminal, "Not enough inputs on stack for swap operation!");
+						print(terminal, "Not enough inputs on stack for swap operation!", error_text_color);
 						stack.clear();
 					} else {
 						var first = stack.pop();
@@ -123,7 +127,7 @@ var words = {
 				},
 				"over" : function(stack, terminal) {
 					if (stack.length() < 2) {
-						print(terminal, "Not enough inputs on stack for over operation!");
+						print(terminal, "Not enough inputs on stack for over operation!", error_text_color);
 						stack.clear();
 					} else {
 						var first = stack.pop();
@@ -265,8 +269,6 @@ function process(stack, input, terminal) {
 		    		process(stack, user_words[temp][j], terminal);
 		    	};
 		    } else if (input_array[i] === "h") {
-		    	//terminal.clear();
-		    	print(terminal, "********************", help_text_color);
 		    	print(terminal, "Available commands:", help_text_color);
 		    	for (var key in words) {
 		    		print(terminal, key, help_text_color);
@@ -275,23 +277,22 @@ function process(stack, input, terminal) {
 		    	for (var key in user_words) {
 		    		print(terminal, key+": "+user_words[key].join(" "), help_text_color);
 		    	}
-		    	print(terminal, "********************", help_text_color);
 		    } else if (input_array[i] === "del") {
 		    	var function_to_remove = input_array[i+1];
 		    	if (function_to_remove in user_words) {
 			    	removeButton(function_to_remove);
 			    	delete user_words[function_to_remove];
 			    } else {
-			    	print(terminal, input_array[i+1] + " is not a user-defined function.");
+			    	print(terminal, input_array[i+1] + " is not a user-defined function.", error_text_color);
 			    }
 			    i++;
 		    } else {
-		        print(terminal, ":-( Unrecognized input");
+		        print(terminal, ":-( Unrecognized input", error_text_color);
 		    }
+		// this else branch handles user function definitions
 		} else {
 			if (input_array[i] === ";") {
 				NOT_DEFINING_FUNCTION = 1;
-				//$("#user-defined-funcs").append("<tr><td>" + formatUserFunctionDef(temp_function_definition) + "</td></tr>");
 				if(!($('#'+temp_function_definition[0]).length)) { // if our button has been made already, no need to make it again
 					createUserFunctionButton(temp_function_definition, stack, terminal);
 				}
@@ -331,7 +332,7 @@ $(document).ready(function() {
     	createFunctionsButtons(stack, terminal, key);
     }
 
-    print(terminal, "Welcome to HaverForth! v0.1");
+    print(terminal, "Welcome to HaverForth! v0.2");
     print(terminal, "As you type, the stack (on the right) will be kept in sync");
     print(terminal, "Type 'h' for available commands");
     
