@@ -103,9 +103,11 @@ var Terminal = (function () {
 			terminalBeep.play()
 		}
 
-		this.print = function (message) {
+		// added color modifications
+		this.print = function (message, color="white") {
 			var newLine = document.createElement('div')
 			newLine.textContent = message
+			newLine.style.color = color
 			this._output.appendChild(newLine)
 		}
 

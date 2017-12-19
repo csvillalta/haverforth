@@ -2,89 +2,150 @@
 // https://stackoverflow.com/questions/1208222/how-to-do-associative-array-hashing-in-javascript
 var NOT_DEFINING_FUNCTION = 1; // flag to make the process function either execute commands in the terminal or add commands to a temporary function definition
 var temp_function_definition = []; // will hold user function definitions (i.e. everything between : and ;) until the function is added to the user_words dictionary
+var help_text_color = "yellow";
 
 var user_words = {}; // holds user functions
 var words = { 
-				"+" : function (stack) {
-				    var first = stack.pop();
-			        var second = stack.pop();
-			        stack.push(first+second);
-				},
-				"-" : function(stack) {
-					var first = stack.pop();
-					var second = stack.pop();
-					stack.push(second-first);
-				},
-				"*" : function(stack) {
-					var first = stack.pop();
-					var second = stack.pop();
-					stack.push(first*second);
-				},
-				"/" : function (stack) {
-				    var first = stack.pop();
-			        var second = stack.pop();
-			        if (first != 0) {
-			        	stack.push(second/first);
-			        }
-				},
-				">" : function(stack) {
-					var first = stack.pop();
-					var second = stack.pop();
-					if (first > second) {
-						stack.push(-1);
+				"+" : function (stack, terminal) {
+					if (stack.length() < 2) {
+						print(terminal, "Not enough inputs on stack for + operation!");
+						stack.clear();
 					} else {
-						stack.push(0);
+					    var first = stack.pop();
+				        var second = stack.pop();
+				        stack.push(first+second);
+				    }
+				},
+				"-" : function(stack, terminal) {
+					if (stack.length() < 2) {
+						print(terminal, "Not enough inputs on stack for - operation!");
+						stack.clear();
+					} else {
+						var first = stack.pop();
+						var second = stack.pop();
+						stack.push(second-first);
 					}
 				},
-				"<" : function(stack) {
-					var first = stack.pop();
-					var second = stack.pop();
-					if (first < second) {
-						stack.push(-1);
+				"*" : function(stack, terminal) {
+					if (stack.length() < 2) {
+						print(terminal, "Not enough inputs on stack for * operation!");
+						stack.clear();
 					} else {
-						stack.push(0);
+						var first = stack.pop();
+						var second = stack.pop();
+						stack.push(first*second);
 					}
 				},
-				"=" : function(stack) {
-					var first = stack.pop();
-					var second = stack.pop();
-					if (first === second) {
-						stack.push(-1);
+				"/" : function (stack, terminal) {
+					if (stack.length() < 2) {
+						print(terminal, "Not enough inputs on stack for / operation!");
+						stack.clear();
 					} else {
-						stack.push(0);
+					    var first = stack.pop();
+				        var second = stack.pop();
+				        if (first != 0) {
+				        	stack.push(second/first);
+				        }
+			    	}
+				},
+				">" : function(stack, terminal) {
+					if (stack.length() < 2) {
+						print(terminal, "Not enough inputs on stack for > operation!");
+						stack.clear();
+					} else {
+						var first = stack.pop();
+						var second = stack.pop();
+						if (first > second) {
+							stack.push(-1);
+						} else {
+							stack.push(0);
+						}
 					}
 				},
-				"dup" : function(stack) {
-					var top = stack.pop();
-					stack.push(top);
-					stack.push(top);
+				"<" : function(stack, terminal) {
+					if (stack.length() < 2) {
+						print(terminal, "Not enough inputs on stack for < operation!");
+						stack.clear();
+					} else {
+						var first = stack.pop();
+						var second = stack.pop();
+						if (first < second) {
+							stack.push(-1);
+						} else {
+							stack.push(0);
+						}
+					}
 				},
-				"nip" : function(stack) {
-					var first = stack.pop();
-					stack.pop();
-					stack.push(first);
+				"=" : function(stack, terminal) {
+					if (stack.length() < 2) {
+						print(terminal, "Not enough inputs on stack for = operation!");
+						stack.clear();
+					} else {
+						var first = stack.pop();
+						var second = stack.pop();
+						if (first === second) {
+							stack.push(-1);
+						} else {
+							stack.push(0);
+						}
+					}
 				},
-				"swap" : function(stack) {
-					var first = stack.pop();
-					var second = stack.pop();
-					stack.push(first);
-					stack.push(second);
+				"dup" : function(stack, terminal) {
+					if (stack.length() < 1) {
+						print(terminal, "Not enough inputs on stack for dup operation!");
+						stack.clear();
+					} else {
+						var top = stack.pop();
+						stack.push(top);
+						stack.push(top);
+					}
 				},
-				"over" : function(stack) {
-					var first = stack.pop();
-					var second = stack.pop();
-					stack.push(second);
-					stack.push(first);
-					stack.push(second);
+				"nip" : function(stack, terminal) {
+					if (stack.length() < 1) {
+						print(terminal, "Not enough inputs on stack for nip operation!");
+						stack.clear();
+					} else {
+						var first = stack.pop();
+						stack.pop();
+						stack.push(first);
+					}
+				},
+				"swap" : function(stack, terminal) {
+					if (stack.length() < 2) {
+						print(terminal, "Not enough inputs on stack for swap operation!");
+						stack.clear();
+					} else {
+						var first = stack.pop();
+						var second = stack.pop();
+						stack.push(first);
+						stack.push(second);
+					}
+				},
+				"over" : function(stack, terminal) {
+					if (stack.length() < 2) {
+						print(terminal, "Not enough inputs on stack for over operation!");
+						stack.clear();
+					} else {
+						var first = stack.pop();
+						var second = stack.pop();
+						stack.push(second);
+						stack.push(first);
+						stack.push(second);
+					}
 				},
 		 };
 
+// simple stack class represented by an array
 class Stack {
 	constructor() {
 		this.repr = [];
 	}
 	pop() {
-		return this.repr.pop();
+		if (this.repr.length == 0) {
+			alert("Can't pop!");
+		} else {
+			return this.repr.pop();
+		}
 	}
 	push(element) {
 		this.repr.push(element);
@@ -95,6 +156,8 @@ class Stack {
 	length() {
 		return this.repr.length;
 	}
+	// this method is to quickly convert the contents of the stack 
+	// into a string seperated by a user selected string delimiter
 	contentsIntoString(delimiter) {
 		return this.repr.slice().join(delimiter);
 	}
@@ -123,25 +186,35 @@ class ObservableStack extends Stack {
 	}
 }
 
-// this function is no longer relevant, but was used to play around with modifying the DOM
-// function formatUserFunctionDef(user_function_array) {
-// 	var formatted_user_function = "";
-// 	for (var i = 1, len = user_function_array.length; i < len; i++) {
-// 		formatted_user_function = formatted_user_function + user_function_array[i] + " ";
-// 	};
-// 	return user_function_array[0] + ": " + formatted_user_function;
-// }
+/**
+ * Simply used to initialize all of the predefined function buttons and make sure they display properly.
+ * I also used a closure here, yay!
+**/
+var createFunctionsButtons = function () {
+	var counter = 0;
+    return (function (stack, terminal, key) { 
+    	if (key === ">") {	// I needed a seperate case for ">" in order to not have JS process ">" as the end brace
+    		$("#available-functions").append('<input type="button"' + 'value=">" id='+counter.toString()+"symbol"+'>').end();	// creates the button
+			$("#"+counter+"symbol").click(function(){ process(stack, key, terminal)}).end();	// attaches click handler
+			counter++
+    	} else {
+	    	$("#available-functions").append('<input type="button"' + 'value='+key+' id='+counter.toString()+"symbol"+'>').end();	// creates the button
+			$("#"+counter+"symbol").click(function(){ process(stack, key, terminal)}).end();	// attaches click handler
+	  		counter++;
+  		}
+  	}
+);}()
 
-// creates buttons for user defined functions in the div labelled user-defined-funcs
+// creates buttons for user defined functions in the div labeled user-defined-funcs
 function createUserFunctionButton(user_function_array, stack, terminal) {
 	var name = user_function_array[0];
 	$("#user-defined-funcs").append('<input type="button"' + 'value='+name+' id='+ name +'>').end(); // creates the button
-  	$("#"+name).click(function(){ process(stack, name, terminal);}).end(); // adds button handler
+  	$("#"+name).click(function(){ process(stack, name, terminal);}).end(); // attatches click handler
 }
 
-// function emptyStack(stack) {
-//     stack.empty();
-// }
+function removeButton(button_id) {
+	$("#"+button_id).remove();
+}
 
 /**
  * Print a string out to the terminal, and update its scroll to the
@@ -150,8 +223,8 @@ function createUserFunctionButton(user_function_array, stack, terminal) {
  * @param {Terminal} terminal - The `terminal` object to write to
  * @param {string}   msg      - The message to print to the terminal
  */
-function print(terminal, msg) {
-    terminal.print(msg);
+function print(terminal, msg, color) {
+    terminal.print(msg, color);
     $("#terminal").scrollTop($('#terminal')[0].scrollHeight + 40);
 }
 
@@ -177,7 +250,6 @@ function process(stack, input, terminal) {
     input_array = input.trim().split(/ +/);
     for (var i = 0, len = input_array.length; i < len; i++) {
 	    if (NOT_DEFINING_FUNCTION) {
-		    // The user typed a number
 		    if (input_array[i] === ":") {
 		    	NOT_DEFINING_FUNCTION = 0;
 		    } else if (!(isNaN(Number(input_array[i])))) {
@@ -186,12 +258,33 @@ function process(stack, input, terminal) {
 		    } else if (input_array[i] === ".s") {
 		        print(terminal, " <" + stack.length() + "> " + stack.contentsIntoString(" "));
 		    } else if (input_array[i] in words) {
-		    	words[input_array[i]](stack);
+		    	words[input_array[i]](stack, terminal);
 		    } else if (input_array[i] in user_words) {
 		    	var temp = input_array[i];
 		    	for (var j = 0, len2 = user_words[temp].length; j < len2; j++) {
 		    		process(stack, user_words[temp][j], terminal);
 		    	};
+		    } else if (input_array[i] === "h") {
+		    	//terminal.clear();
+		    	print(terminal, "********************", help_text_color);
+		    	print(terminal, "Available commands:", help_text_color);
+		    	for (var key in words) {
+		    		print(terminal, key, help_text_color);
+		    	}
+		    	print(terminal, "Available user-defined commands:", help_text_color)
+		    	for (var key in user_words) {
+		    		print(terminal, key+": "+user_words[key].join(" "), help_text_color);
+		    	}
+		    	print(terminal, "********************", help_text_color);
+		    } else if (input_array[i] === "del") {
+		    	var function_to_remove = input_array[i+1];
+		    	if (function_to_remove in user_words) {
+			    	removeButton(function_to_remove);
+			    	delete user_words[function_to_remove];
+			    } else {
+			    	print(terminal, input_array[i+1] + " is not a user-defined function.");
+			    }
+			    i++;
 		    } else {
 		        print(terminal, ":-( Unrecognized input");
 		    }
@@ -231,13 +324,22 @@ $(document).ready(function() {
     $("#terminal").append(terminal.html);
 
     var stack = new ObservableStack();
-    stack.registerObserver(renderStack)
+    stack.registerObserver(renderStack);	// in order to render the stack whenever the stack changes from pushing 
+
+    // create the pre-defined function buttons
+    for (var key in words) {
+    	createFunctionsButtons(stack, terminal, key);
+    }
 
     print(terminal, "Welcome to HaverForth! v0.1");
     print(terminal, "As you type, the stack (on the right) will be kept in sync");
+    print(terminal, "Type 'h' for available commands");
+    
     $("#reset").click(function() {
     	stack.clear();
-    })
+    	terminal.clear();
+    	print(terminal, "Type a forth command:");
+    });
 
     runRepl(terminal, stack);
 });
