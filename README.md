@@ -7,8 +7,9 @@ Adapted from https://github.com/kmicinski/haverforth
 **Part 7 and 8 of lab 7E are in the file named lab_7E_reflections.MD. Part 13 of the final is in the file named final_project_reflections.MD.**
 
 **My additions for part 12 of the final project were:**
-- the ability to delete user-defined functions using "del"
-- the ability to see all available commands using "h"
+- a row of buttons for the predefined functions
+- the ability to delete user-defined functions using "del" which also deletes the associated button
+- the ability to see all available commands by typing "h"
 - colored terminal outputs for errors and "h"
 
 **Usage**
